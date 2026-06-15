@@ -18,7 +18,6 @@ import {
   Radar,
   Server,
   ShieldCheck,
-  Sparkles,
   TerminalSquare,
   Zap
 } from 'lucide-react';
@@ -92,8 +91,7 @@ function App() {
       <Features />
       <Workflow />
       <UseCases />
-      <Pricing />
-      <Waitlist />
+      <GetStarted />
       <Footer />
     </main>
   );
@@ -113,12 +111,11 @@ function Navigation() {
         <a href="#features">Features</a>
         <a href="#workflow">Workflow</a>
         <a href="#use-cases">Use cases</a>
-        <a href="#pricing">Pricing</a>
-        <a href={GITHUB_URL} target="_blank" rel="noreferrer">GitHub</a>
+        <a href="#start">Open source</a>
       </nav>
-      <a className="nav-cta" href="#waitlist">
-        <Sparkles size={16} aria-hidden="true" />
-        Waitlist
+      <a className="nav-cta" href={GITHUB_URL} target="_blank" rel="noreferrer">
+        <Github size={16} aria-hidden="true" />
+        Star on GitHub
       </a>
     </header>
   );
@@ -138,7 +135,7 @@ function Hero() {
         <div className="hero-copy">
           <div className="eyebrow">
             <CircleDot size={14} aria-hidden="true" />
-            Autonomous engineering fleet orchestration
+            Open source · autonomous fleet orchestration
           </div>
           <h1>Your AI engineering fleet, crystal clear.</h1>
           <p>
@@ -147,17 +144,13 @@ function Hero() {
             operation bright, observable, and moving.
           </p>
           <div className="hero-actions">
-            <a className="primary-btn" href="#waitlist">
-              Join the waitlist
+            <a className="primary-btn" href="#start">
+              Get started
               <ArrowUpRight size={18} aria-hidden="true" />
             </a>
             <a className="secondary-btn" href="#workflow">
               See the workflow
               <ChevronRight size={18} aria-hidden="true" />
-            </a>
-            <a className="secondary-btn" href={GITHUB_URL} target="_blank" rel="noreferrer">
-              <Github size={18} aria-hidden="true" />
-              Star on GitHub
             </a>
           </div>
           <div className="hero-proof" aria-label="Lumpy platform proof points">
@@ -292,8 +285,8 @@ function Workflow() {
         <span>Workflow</span>
         <h2>From repo sprawl to an orchestrated agent fleet.</h2>
         <p>
-          The redesign keeps the original product promise, but frames it as a calm
-          operating layer: visible status, guided decisions, and verified recovery.
+          Lumpy turns repo sprawl into a calm operating layer — visible status, guided
+          decisions, and verified recovery, all running on infrastructure you control.
         </p>
       </div>
       <div className="timeline">
@@ -356,56 +349,27 @@ function UseCases() {
   );
 }
 
-function Pricing() {
+function GetStarted() {
   return (
-    <section className="section" id="pricing">
-      <div className="section-heading">
-        <span>Pricing concept</span>
-        <h2>Start with one project, scale into a fleet.</h2>
-      </div>
-      <div className="pricing-grid">
-        <article className="price-card">
-          <h3>Solo</h3>
-          <strong>$0</strong>
-          <p>For testing Lumpy on a single project.</p>
-          <a href="#waitlist">Join waitlist</a>
-        </article>
-        <article className="price-card featured">
-          <div className="label">Most likely</div>
-          <h3>Team</h3>
-          <strong>$XX</strong>
-          <p>For teams running agents across several projects and services.</p>
-          <a href="#waitlist">Request access</a>
-        </article>
-        <article className="price-card">
-          <h3>Enterprise</h3>
-          <strong>Talk</strong>
-          <p>For self-hosted, VPC, SSO, audit logs, and dedicated support.</p>
-          <a href="https://www.nublear.com/contact">Talk to Nublear</a>
-        </article>
-      </div>
-    </section>
-  );
-}
-
-function Waitlist() {
-  return (
-    <section className="waitlist" id="waitlist">
+    <section className="waitlist" id="start">
       <div>
-        <span>Early access</span>
-        <h2>Put your engineering operation on autopilot.</h2>
-        <p>Join the Lumpy waitlist and see what an always-on AI engineering fleet feels like when it is designed to stay legible.</p>
+        <span>Open source</span>
+        <h2>Free to use. Yours to self-host.</h2>
+        <p>
+          Lumpy is open source — clone the repo, run it on your own box, and keep full
+          control of every agent, secret, and server. No accounts, no limits, no lock-in.
+        </p>
       </div>
-      <form onSubmit={(event) => event.preventDefault()}>
-        <label htmlFor="email">Email address</label>
-        <div className="input-row">
-          <input id="email" type="email" placeholder="you@company.com" />
-          <button type="submit">
-            Request access
-            <ArrowUpRight size={17} aria-hidden="true" />
-          </button>
-        </div>
-      </form>
+      <div className="hero-actions">
+        <a className="primary-btn" href={GITHUB_URL} target="_blank" rel="noreferrer">
+          <Github size={18} aria-hidden="true" />
+          View on GitHub
+        </a>
+        <a className="secondary-btn" href="#features">
+          Explore the features
+          <ChevronRight size={18} aria-hidden="true" />
+        </a>
+      </div>
     </section>
   );
 }
