@@ -6,7 +6,6 @@ import {
   Bot,
   Check,
   ChevronRight,
-  CircleDot,
   Command,
   Cpu,
   Gauge,
@@ -133,10 +132,6 @@ function Hero() {
       <div className="hero-shine" aria-hidden="true" />
       <div className="hero-inner">
         <div className="hero-copy">
-          <div className="eyebrow">
-            <CircleDot size={14} aria-hidden="true" />
-            Open source · autonomous fleet orchestration
-          </div>
           <h1>Your AI engineering fleet, crystal clear.</h1>
           <p>
             Lumpy spins up, supervises, and self-heals fleets of coding agents across
@@ -163,11 +158,6 @@ function Hero() {
           </div>
         </div>
         <ProductPreview />
-      </div>
-      <div className="next-peek" aria-hidden="true">
-        <span>Capabilities</span>
-        <span>Conductor</span>
-        <span>Self-healing</span>
       </div>
     </section>
   );
@@ -285,7 +275,7 @@ function Workflow() {
         <span>Workflow</span>
         <h2>From repo sprawl to an orchestrated agent fleet.</h2>
         <p>
-          Lumpy turns repo sprawl into a calm operating layer — visible status, guided
+          Lumpy turns repo sprawl into a calm operating layer - visible status, guided
           decisions, and verified recovery, all running on infrastructure you control.
         </p>
       </div>
@@ -356,7 +346,7 @@ function GetStarted() {
         <span>Open source</span>
         <h2>Free to use. Yours to self-host.</h2>
         <p>
-          Lumpy is open source — clone the repo, run it on your own box, and keep full
+          Lumpy is open source - clone the repo, run it on your own box, and keep full
           control of every agent, secret, and server. No accounts, no limits, no lock-in.
         </p>
       </div>
@@ -385,7 +375,7 @@ function Footer() {
         </span>
       </a>
       <p>
-        © {new Date().getFullYear()} Lumpy — a Nublear platform.{' '}
+        © {new Date().getFullYear()} Lumpy - a Nublear platform.{' '}
         <a href={GITHUB_URL} target="_blank" rel="noreferrer">
           Star us on GitHub
         </a>

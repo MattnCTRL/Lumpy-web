@@ -1,6 +1,6 @@
 # Lumpy-web
 
-The landing page for **Lumpy** — a Nublear platform. Live at
+The landing page for **Lumpy** - a Nublear platform. Live at
 [lumpy.nublear.com](https://lumpy.nublear.com).
 
 React + Vite + Tailwind. A fresh start (the previous static page is retired).
