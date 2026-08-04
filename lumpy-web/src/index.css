@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Match the product shell: neutral-950 + monospace everywhere. */
+body {
+  @apply bg-neutral-950 font-mono text-neutral-200 antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-pulseDot {
+    animation: none;
+  }
+}
+
+@layer components {
+  /* Mirrors apps/web/src/app/globals.css */
+  .input {
+    @apply w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 outline-none placeholder:text-neutral-600 focus:border-neutral-500;
+  }
+}

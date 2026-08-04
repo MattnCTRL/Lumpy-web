@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lumpy — Your autonomous engineering fleet, orchestrated | Nublear</title>
+<meta name="description" content="Lumpy spins up, monitors, and self-heals fleets of Claude Code agents across your projects and servers — with an always-on Conductor keeping everything healthy 24/7. A Nublear platform." />
+<meta name="theme-color" content="#040d1a" />
+
+<!-- Open Graph / social -->
+<meta property="og:title" content="Lumpy — Your autonomous engineering fleet, orchestrated" />
+<meta property="og:description" content="Run a fleet of AI engineers that build, monitor, and heal your software — supervised around the clock by an always-on Conductor." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://lumpy.nublear.com" />
+<!-- PLACEHOLDER: add a real OG image at /og.png (1200x630) -->
+<meta property="og:image" content="https://lumpy.nublear.com/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --bg:#040d1a;            /* Nublear base navy */
+    --bg-2:#06122473;
+    --panel:#0a1b30;
+    --panel-2:#0c2138;
+    --line:#15314f;
+    --line-soft:#10273f;
+    --text:#eaf2ff;
+    --muted:#9fb4cf;
+    --muted-2:#6f86a4;
+    --accent:#37d4d4;        /* cyan */
+    --accent-2:#5b8cff;      /* indigo-blue */
+    --accent-3:#8a7bff;      /* violet */
+    --good:#34d399;
+    --warn:#fbbf24;
+    --radius:16px;
+    --radius-sm:10px;
+    --maxw:1160px;
+    --shadow:0 24px 60px -20px rgba(0,0,0,.6);
+    --grad:linear-gradient(120deg,var(--accent),var(--accent-2) 55%,var(--accent-3));
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--bg);color:var(--text);
+    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+  h1,h2,h3{line-height:1.1;letter-spacing:-.02em;margin:0}
+  p{margin:0}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .mono{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+  .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .eyebrow{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+
+  /* ambient background */
+  .glow{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .glow::before,.glow::after{content:"";position:absolute;border-radius:50%;filter:blur(120px);opacity:.30}
+  .glow::before{width:620px;height:620px;background:radial-gradient(circle,#1f6feb,transparent 60%);top:-180px;left:-120px}
+  .glow::after{width:560px;height:560px;background:radial-gradient(circle,#37d4d4,transparent 60%);top:240px;right:-160px;opacity:.18}
+  .grid-bg{position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:linear-gradient(var(--line-soft) 1px,transparent 1px),linear-gradient(90deg,var(--line-soft) 1px,transparent 1px);
+    background-size:54px 54px;mask-image:radial-gradient(ellipse 80% 60% at 50% 0,#000 30%,transparent 75%);opacity:.5}
+  .content{position:relative;z-index:1}
+
+  /* nav */
+  header.nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);
+    background:rgba(4,13,26,.72);border-bottom:1px solid transparent;transition:border-color .2s,background .2s}
+  header.nav.scrolled{border-color:var(--line-soft);background:rgba(4,13,26,.88)}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:700}
+  .brand .mark{width:30px;height:30px;border-radius:9px;background:var(--grad);display:grid;place-items:center;
+    box-shadow:0 6px 18px -6px var(--accent-2)}
+  .brand .mark svg{width:18px;height:18px;display:block}
+  .brand .name{font-size:18px;letter-spacing:-.01em}
+  .brand .by{color:var(--muted-2);font-weight:500;font-size:12px;border-left:1px solid var(--line);padding-left:11px;margin-left:3px}
+  .nav-links{display:flex;align-items:center;gap:30px}
+  .nav-links a{color:var(--muted);font-size:14.5px;font-weight:500;transition:color .15s}
+  .nav-links a:hover{color:var(--text)}
+  .nav-cta{display:flex;align-items:center;gap:14px}
+  .btn{display:inline-flex;align-items:center;gap:9px;font-weight:600;font-size:14.5px;border-radius:11px;
+    padding:11px 18px;border:1px solid transparent;cursor:pointer;transition:transform .12s,box-shadow .2s,background .2s,border-color .2s;white-space:nowrap}
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{background:var(--grad);color:#03101f;box-shadow:0 10px 30px -10px var(--accent-2)}
+  .btn-primary:hover{box-shadow:0 14px 38px -10px var(--accent-2)}
+  .btn-ghost{border-color:var(--line);color:var(--text);background:rgba(255,255,255,.02)}
+  .btn-ghost:hover{border-color:var(--accent-2);background:rgba(91,140,255,.08)}
+  .btn-lg{padding:14px 24px;font-size:16px;border-radius:13px}
+  .hamburger{display:none;background:none;border:1px solid var(--line);border-radius:9px;padding:8px;color:var(--text);cursor:pointer}
+
+  /* hero */
+  .hero{padding:84px 0 56px}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:54px;align-items:center}
+  .badge{display:inline-flex;align-items:center;gap:9px;padding:7px 14px;border:1px solid var(--line);
+    border-radius:999px;background:rgba(255,255,255,.03);font-size:13px;color:var(--muted);margin-bottom:22px}
+  .badge .dot{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 0 4px rgba(52,211,153,.18)}
+  h1.hl{font-size:clamp(38px,5.4vw,62px);font-weight:800}
+  .hero p.sub{margin-top:22px;font-size:clamp(17px,2vw,20px);color:var(--muted);max-width:560px}
+  .hero-cta{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}
+  .hero-note{margin-top:18px;font-size:13.5px;color:var(--muted-2);display:flex;align-items:center;gap:8px}
+
+  /* hero dashboard mock */
+  .mock{position:relative;border:1px solid var(--line);border-radius:18px;background:
+    linear-gradient(180deg,var(--panel),#071528);box-shadow:var(--shadow);overflow:hidden}
+  .mock .bar{display:flex;align-items:center;gap:8px;padding:13px 16px;border-bottom:1px solid var(--line-soft);background:rgba(255,255,255,.02)}
+  .mock .bar i{width:11px;height:11px;border-radius:50%;background:#24405f;display:block}
+  .mock .bar i:nth-child(1){background:#ff5f57}.mock .bar i:nth-child(2){background:#febc2e}.mock .bar i:nth-child(3){background:#28c840}
+  .mock .bar .tt{margin-left:10px;font-size:12.5px;color:var(--muted-2)}
+  .mock .body{padding:16px;display:grid;grid-template-columns:1.1fr 1fr;gap:14px}
+  .card{border:1px solid var(--line-soft);border-radius:12px;background:rgba(255,255,255,.02);padding:13px}
+  .card h4{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted-2);font-weight:600;margin-bottom:11px}
+  .srow{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--line-soft);font-size:13px}
+  .srow:first-of-type{border-top:0}
+  .srow .l{display:flex;align-items:center;gap:9px;color:var(--text)}
+  .pill{font-size:11px;padding:3px 9px;border-radius:999px;font-weight:600}
+  .pill.run{color:#7ff0d0;background:rgba(52,211,153,.12)}
+  .pill.work{color:#9fc2ff;background:rgba(91,140,255,.14)}
+  .pill.idle{color:#cdd9ea;background:rgba(255,255,255,.06)}
+  .led{width:7px;height:7px;border-radius:50%}
+  .led.g{background:var(--good);box-shadow:0 0 0 3px rgba(52,211,153,.18)}
+  .led.b{background:var(--accent-2);box-shadow:0 0 0 3px rgba(91,140,255,.18);animation:pulse 1.6s infinite}
+  @keyframes pulse{50%{opacity:.45}}
+  .meter{height:6px;border-radius:4px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:7px}
+  .meter > span{display:block;height:100%;background:var(--grad)}
+  .big{font-size:26px;font-weight:800;letter-spacing:-.02em}
+  .uptime{display:flex;gap:3px;margin-top:10px}
+  .uptime i{flex:1;height:26px;border-radius:3px;background:var(--good);opacity:.85}
+  .uptime i.b{background:var(--accent-2)}
+
+  /* generic section */
+  section{padding:78px 0;position:relative}
+  .sec-head{max-width:640px;margin:0 auto 50px;text-align:center}
+  .sec-head h2{font-size:clamp(28px,3.6vw,42px);font-weight:800;margin-top:14px}
+  .sec-head p{margin-top:16px;color:var(--muted);font-size:17px}
+
+  /* logos / placeholder */
+  .logos{display:flex;flex-wrap:wrap;gap:14px 40px;justify-content:center;align-items:center;opacity:.9}
+  .logos .ph{height:34px;min-width:120px;border:1px dashed var(--line);border-radius:8px;display:grid;place-items:center;
+    color:var(--muted-2);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+  .ph-tag{display:inline-block;font-size:11px;color:var(--muted-2);border:1px solid var(--line);border-radius:6px;padding:2px 7px;margin-bottom:14px}
+
+  /* features */
+  .feat{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .feat .f{border:1px solid var(--line-soft);border-radius:var(--radius);background:linear-gradient(180deg,var(--panel),#071729);
+    padding:24px;transition:transform .18s,border-color .18s,box-shadow .18s}
+  .feat .f:hover{transform:translateY(-4px);border-color:var(--accent-2);box-shadow:var(--shadow)}
+  .f .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;margin-bottom:16px;
+    background:rgba(91,140,255,.12);border:1px solid var(--line)}
+  .f .ic svg{width:22px;height:22px;stroke:var(--accent);fill:none;stroke-width:1.7}
+  .f h3{font-size:18.5px;margin-bottom:9px}
+  .f p{color:var(--muted);font-size:15px}
+
+  /* steps */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;counter-reset:s}
+  .step{position:relative;border:1px solid var(--line-soft);border-radius:var(--radius);background:var(--bg-2);padding:24px}
+  .step::before{counter-increment:s;content:"0" counter(s);font-family:"JetBrains Mono",monospace;font-size:13px;
+    color:var(--accent);font-weight:600;letter-spacing:.1em}
+  .step h3{font-size:17px;margin:12px 0 8px}
+  .step p{color:var(--muted);font-size:14.5px}
+
+  /* split / use cases */
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+  .uc{display:flex;gap:14px;padding:16px 0;border-top:1px solid var(--line-soft)}
+  .uc:first-child{border-top:0}
+  .uc .chk{flex:0 0 auto;width:26px;height:26px;border-radius:8px;background:rgba(55,212,212,.12);display:grid;place-items:center}
+  .uc .chk svg{width:15px;height:15px;stroke:var(--accent);fill:none;stroke-width:2.2}
+  .uc h4{font-size:16px;margin-bottom:3px}
+  .uc p{color:var(--muted);font-size:14.5px}
+  .panel-visual{border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(180deg,var(--panel),#06152a);
+    box-shadow:var(--shadow);padding:18px}
+  .term{font-family:"JetBrains Mono",monospace;font-size:13px;color:#cfe0f5}
+  .term .ln{padding:3px 0;white-space:pre-wrap}
+  .term .c-ac{color:var(--accent)} .term .c-b{color:var(--accent-2)} .term .c-g{color:var(--good)} .term .c-m{color:var(--muted-2)} .term .c-w{color:var(--warn)}
+
+  /* stats */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;border:1px solid var(--line-soft);
+    border-radius:var(--radius);background:var(--bg-2);padding:34px 24px}
+  .stat{text-align:center}
+  .stat .n{font-size:clamp(28px,3.4vw,40px);font-weight:800;letter-spacing:-.02em}
+  .stat .lbl{color:var(--muted);font-size:14px;margin-top:6px}
+
+  /* testimonials placeholder */
+  .quotes{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .quote{border:1px dashed var(--line);border-radius:var(--radius);background:rgba(255,255,255,.015);padding:24px}
+  .quote p{color:var(--muted);font-size:15px;font-style:italic}
+  .quote .who{display:flex;align-items:center;gap:11px;margin-top:18px}
+  .quote .av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--line),var(--panel-2));border:1px solid var(--line)}
+  .quote .who b{font-size:14px} .quote .who span{display:block;color:var(--muted-2);font-size:12.5px}
+
+  /* pricing / waitlist */
+  .price{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:stretch}
+  .tier{border:1px solid var(--line-soft);border-radius:var(--radius);background:linear-gradient(180deg,var(--panel),#06152a);padding:28px;display:flex;flex-direction:column}
+  .tier.feature{border-color:var(--accent-2);box-shadow:0 0 0 1px rgba(91,140,255,.25),var(--shadow);position:relative}
+  .tier.feature::after{content:"Most popular";position:absolute;top:-11px;left:28px;background:var(--grad);color:#03101f;
+    font-size:11px;font-weight:700;padding:4px 11px;border-radius:999px;letter-spacing:.04em}
+  .tier h3{font-size:19px}
+  .tier .amt{font-size:38px;font-weight:800;margin:14px 0 2px;letter-spacing:-.02em}
+  .tier .amt small{font-size:14px;color:var(--muted-2);font-weight:500}
+  .tier .desc{color:var(--muted);font-size:14px;min-height:40px}
+  .tier ul{list-style:none;padding:0;margin:18px 0 24px;display:grid;gap:11px}
+  .tier li{display:flex;gap:10px;align-items:flex-start;color:var(--muted);font-size:14.5px}
+  .tier li svg{flex:0 0 auto;width:17px;height:17px;stroke:var(--accent);fill:none;stroke-width:2.2;margin-top:3px}
+  .tier .btn{margin-top:auto;justify-content:center}
+
+  /* waitlist band */
+  .cta-band{border:1px solid var(--line);border-radius:24px;background:
+    radial-gradient(120% 160% at 0% 0%,rgba(91,140,255,.18),transparent 50%),
+    radial-gradient(120% 160% at 100% 100%,rgba(55,212,212,.16),transparent 50%),var(--panel);
+    padding:54px;text-align:center;box-shadow:var(--shadow)}
+  .cta-band h2{font-size:clamp(26px,3.4vw,40px);font-weight:800}
+  .cta-band p{color:var(--muted);margin-top:14px;font-size:17px}
+  .wl{display:flex;gap:10px;max-width:480px;margin:28px auto 0;flex-wrap:wrap;justify-content:center}
+  .wl input{flex:1;min-width:220px;background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--text);
+    border-radius:12px;padding:14px 16px;font-size:15px;outline:none;transition:border-color .15s}
+  .wl input:focus{border-color:var(--accent-2)}
+  .wl-note{margin-top:14px;font-size:13px;color:var(--muted-2)}
+  .wl-ok{margin-top:16px;color:var(--good);font-size:14.5px;display:none}
+
+  /* faq */
+  .faq{max-width:780px;margin:0 auto;display:grid;gap:12px}
+  details{border:1px solid var(--line-soft);border-radius:12px;background:var(--bg-2);padding:4px 20px}
+  details[open]{border-color:var(--line)}
+  summary{cursor:pointer;list-style:none;padding:18px 0;font-weight:600;font-size:16.5px;display:flex;justify-content:space-between;gap:16px;align-items:center}
+  summary::-webkit-details-marker{display:none}
+  summary .x{flex:0 0 auto;color:var(--accent);transition:transform .2s;font-size:20px;line-height:1}
+  details[open] summary .x{transform:rotate(45deg)}
+  details p{color:var(--muted);padding:0 0 20px;font-size:15px}
+
+  /* footer */
+  footer{border-top:1px solid var(--line-soft);padding:54px 0 40px;margin-top:30px}
+  .foot{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:30px}
+  .foot h5{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted-2);margin:0 0 14px}
+  .foot a{display:block;color:var(--muted);font-size:14.5px;padding:6px 0;transition:color .15s}
+  .foot a:hover{color:var(--text)}
+  .foot .blurb{color:var(--muted);font-size:14px;max-width:280px;margin-top:14px}
+  .foot-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:40px;padding-top:24px;border-top:1px solid var(--line-soft);color:var(--muted-2);font-size:13.5px;flex-wrap:wrap;gap:12px}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  @media (max-width:960px){
+    .hero-grid,.split{grid-template-columns:1fr;gap:36px}
+    .feat,.steps,.stats,.quotes,.price{grid-template-columns:1fr 1fr}
+    .foot{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:680px){
+    .nav-links{display:none}
+    .hamburger{display:inline-flex}
+    .nav-links.open{display:flex;position:absolute;top:68px;left:0;right:0;flex-direction:column;gap:0;
+      background:rgba(4,13,26,.97);border-bottom:1px solid var(--line);padding:8px 24px 18px}
+    .nav-links.open a{padding:13px 0;border-top:1px solid var(--line-soft)}
+    .feat,.steps,.stats,.quotes,.price,.foot{grid-template-columns:1fr}
+    .cta-band{padding:34px 22px}
+    .mock .body{grid-template-columns:1fr}
+    section{padding:58px 0}
+  }
+  @media (prefers-reduced-motion:reduce){.reveal{transition:none;opacity:1;transform:none}.led.b{animation:none}}
+</style>
+</head>
+<body>
+<div class="glow"></div>
+<div class="grid-bg"></div>
+
+<div class="content">
+<!-- ============ NAV ============ -->
+<header class="nav" id="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top" aria-label="Lumpy by Nublear">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 14c2.5 0 2.5-5 5-5s2.5 5 5 5 2.5-5 5-5" stroke="#03101f" stroke-width="2.2" stroke-linecap="round"/><circle cx="6" cy="18" r="1.6" fill="#03101f"/><circle cx="18" cy="6" r="1.6" fill="#03101f"/></svg>
+      </span>
+      <span class="name">Lumpy</span>
+      <span class="by">by Nublear</span>
+    </a>
+    <nav class="nav-links" id="navlinks">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#use-cases">Use cases</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-primary" href="#waitlist">Join the waitlist</a>
+      <button class="hamburger" id="ham" aria-label="Menu" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<a id="top"></a>
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="reveal">
+      <span class="badge"><span class="dot"></span> Always-on orchestration for AI engineering teams</span>
+      <h1 class="hl">Your autonomous engineering fleet, <span class="grad-text">orchestrated.</span></h1>
+      <p class="sub">Lumpy spins up, supervises, and self-heals fleets of Claude Code agents across your projects and servers — with an always-on Conductor keeping everything healthy around the clock.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary btn-lg" href="#waitlist">Join the waitlist
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#03101f" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a class="btn btn-ghost btn-lg" href="#how">See how it works</a>
+      </div>
+      <div class="hero-note">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Connect your repos &amp; servers · drive agents from anywhere, even your phone
+      </div>
+    </div>
+
+    <!-- live-style dashboard mock -->
+    <div class="mock reveal" aria-hidden="true">
+      <div class="bar"><i></i><i></i><i></i><span class="tt mono">lumpy · conductor</span></div>
+      <div class="body">
+        <div class="card">
+          <h4>Sessions</h4>
+          <div class="srow"><span class="l"><span class="led b"></span>Conductor</span><span class="pill work">working</span></div>
+          <div class="srow"><span class="l"><span class="led g"></span>Librarian: Latchkey</span><span class="pill run">running</span></div>
+          <div class="srow"><span class="l"><span class="led g"></span>Health Auditor</span><span class="pill run">running</span></div>
+          <div class="srow"><span class="l"><span class="led b"></span>api-refactor</span><span class="pill work">working</span></div>
+          <div class="srow"><span class="l"><span class="led" style="background:#6f86a4"></span>nightly-tests</span><span class="pill idle">idle</span></div>
+        </div>
+        <div style="display:grid;gap:14px">
+          <div class="card">
+            <h4>Fleet health</h4>
+            <div class="big">5 / 5 <span style="font-size:13px;color:var(--muted);font-weight:500">online</span></div>
+            <div class="meter"><span style="width:84%"></span></div>
+            <div class="srow" style="border-top:0;padding-top:10px;color:var(--muted-2);font-size:12px">cpu 18% · mem 45% · 0 alerts</div>
+          </div>
+          <div class="card">
+            <h4>Uptime · self-healing</h4>
+            <div class="uptime">
+              <i></i><i></i><i></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            </div>
+            <div class="srow" style="border-top:0;padding-top:10px;color:var(--muted-2);font-size:12px">auto-recovered in &lt;1 min</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LOGOS (placeholder) ============ -->
+<section style="padding:30px 0 10px">
+  <div class="wrap" style="text-align:center">
+    <p class="eyebrow" style="margin-bottom:22px">Teams building on Lumpy</p>
+    <!-- PLACEHOLDER: replace these with real customer / partner logos (SVG) -->
+    <div class="logos reveal">
+      <div class="ph">Your logo</div>
+      <div class="ph">Your logo</div>
+      <div class="ph">Your logo</div>
+      <div class="ph">Your logo</div>
+      <div class="ph">Your logo</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURES ============ -->
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Capabilities</span>
+      <h2>One platform to run your whole AI engineering operation</h2>
+      <p>Lumpy turns a pile of one-off AI coding sessions into a coordinated, supervised, self-healing fleet.</p>
+    </div>
+    <div class="feat">
+      <div class="f reveal">
+        <div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+        <h3>Orchestrate Claude Code agents</h3>
+        <p>Spin up autonomous coding sessions per project, give each one a task, and let them run. Start, stop, resume, and steer every agent from one place.</p>
+      </div>
+      <div class="f reveal">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M3 12h4l2 6 4-14 2 8h6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>Fleet &amp; uptime monitoring</h3>
+        <p>Track every server, machine, and remote with live CPU, memory, disk and load — plus hosted-service uptime checks and alerts when something goes sideways.</p>
+      </div>
+      <div class="f reveal">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>Self-healing deploys</h3>
+        <p>Ship changes with build, type-check and health verification — and automatic rollback if anything fails. Agents can safely improve the platform itself without taking it down.</p>
+      </div>
+      <div class="f reveal">
+        <div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2" stroke-linecap="round"/></svg></div>
+        <h3>The Conductor</h3>
+        <p>A top-level orchestrator watches platform health and the whole fleet 24/7 — triaging problems, keeping sessions productive, and logging the state of everything.</p>
+      </div>
+      <div class="f reveal">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 19V5a1 1 0 011-1h11l4 4v11a1 1 0 01-1 1H5a1 1 0 01-1-1z" stroke-linejoin="round"/><path d="M8 9h6M8 13h8M8 17h5" stroke-linecap="round"/></svg></div>
+        <h3>Micro-services &amp; Librarians</h3>
+        <p>Deploy reusable specialist agents — like per-project Librarians that build living knowledge bases, or a Platform Health Auditor that keeps watch.</p>
+      </div>
+      <div class="f reveal">
+        <div class="ic"><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2" stroke-linecap="round"/></svg></div>
+        <h3>Drive it from anywhere</h3>
+        <p>Approve a prompt, answer a question, or kick off work straight from your phone. Your fleet keeps moving whether you're at your desk or not.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">How it works</span>
+      <h2>From repos to a running fleet in minutes</h2>
+      <p>Point Lumpy at your work, define what each agent should do, and let the Conductor keep it all healthy.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal"><h3>Connect</h3><p>Link your projects, repositories, and servers. Lumpy imports them and maps your fleet automatically.</p></div>
+      <div class="step reveal"><h3>Spin up agents</h3><p>Create autonomous Claude Code sessions per project with a task and the access they need.</p></div>
+      <div class="step reveal"><h3>Supervise</h3><p>The Conductor monitors health, surfaces alerts, and keeps every session doing useful work.</p></div>
+      <div class="step reveal"><h3>Ship &amp; self-heal</h3><p>Changes deploy with verification and auto-rollback, so your platform stays up no matter what.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ USE CASES / SPLIT ============ -->
+<section id="use-cases">
+  <div class="wrap split">
+    <div class="reveal">
+      <span class="eyebrow">Built for</span>
+      <h2 style="font-size:clamp(26px,3.4vw,38px);font-weight:800;margin:14px 0 10px">Teams that run more software than people can babysit</h2>
+      <p style="color:var(--muted);font-size:16px;margin-bottom:22px">Whether you operate one product or a portfolio, Lumpy gives you a coordinated AI engineering layer that never sleeps.</p>
+      <div class="uc"><span class="chk"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div><h4>Portfolio &amp; agency teams</h4><p>Run a dedicated agent fleet per client project, each with its own knowledge base and guardrails.</p></div></div>
+      <div class="uc"><span class="chk"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div><h4>Platform &amp; infra teams</h4><p>Continuous monitoring, triage, and safe self-healing deploys across your whole server fleet.</p></div></div>
+      <div class="uc"><span class="chk"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div><h4>Solo founders &amp; small teams</h4><p>Punch above your headcount — keep maintenance, tests, and upkeep moving without a full ops team.</p></div></div>
+    </div>
+    <div class="panel-visual reveal">
+      <div class="bar" style="border:0;padding:0 0 12px"><i style="width:11px;height:11px;border-radius:50%;background:#ff5f57;display:block"></i><i style="width:11px;height:11px;border-radius:50%;background:#febc2e;display:block;margin-left:6px"></i><i style="width:11px;height:11px;border-radius:50%;background:#28c840;display:block;margin-left:6px"></i><span class="mono" style="margin-left:10px;font-size:12px;color:var(--muted-2)">conductor · live log</span></div>
+      <div class="term">
+        <div class="ln"><span class="c-m">[sweep]</span> platform <span class="c-g">ok</span> · uptime climbing · <span class="c-g">5/5 fleet online</span></div>
+        <div class="ln"><span class="c-m">[sessions]</span> Conductor <span class="c-b">working</span> · Librarian:Latchkey <span class="c-g">running</span></div>
+        <div class="ln"><span class="c-m">[alert]</span> <span class="c-w">node offline</span> → triaging…</div>
+        <div class="ln"><span class="c-m">[heal]</span> redeploy verified · health <span class="c-g">200 OK</span> · <span class="c-g">recovered &lt;1 min</span></div>
+        <div class="ln"><span class="c-m">[deploy]</span> build ✓ typecheck ✓ health ✓ → <span class="c-ac">live</span></div>
+        <div class="ln"><span class="c-m">[conductor]</span> all systems nominal · next sweep in 15m</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STATS (placeholder values) ============ -->
+<section style="padding-top:20px">
+  <div class="wrap">
+    <span class="ph-tag reveal">Placeholder metrics — wire to real data before launch</span>
+    <div class="stats reveal">
+      <!-- PLACEHOLDER: replace with verified numbers -->
+      <div class="stat"><div class="n grad-text">24/7</div><div class="lbl">Autonomous supervision</div></div>
+      <div class="stat"><div class="n grad-text">&lt;1<small> min</small></div><div class="lbl">Typical self-heal recovery</div></div>
+      <div class="stat"><div class="n grad-text">∞</div><div class="lbl">Agents per fleet</div></div>
+      <div class="stat"><div class="n grad-text">XX%</div><div class="lbl">Less manual ops <em style="font-style:normal;color:var(--muted-2)">(placeholder)</em></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TESTIMONIALS (placeholder) ============ -->
+<section>
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">What people say</span>
+      <h2>Loved by the teams it runs for</h2>
+      <p><span class="ph-tag">Placeholder testimonials — swap for real quotes &amp; attribution</span></p>
+    </div>
+    <div class="quotes">
+      <div class="quote reveal"><p>“[ Customer quote about how Lumpy replaced a pile of manual babysitting with a fleet that just runs. ]”</p><div class="who"><span class="av"></span><div><b>Name Surname</b><span>Role · Company</span></div></div></div>
+      <div class="quote reveal"><p>“[ Customer quote about uptime / self-healing saving a weekend. ]”</p><div class="who"><span class="av"></span><div><b>Name Surname</b><span>Role · Company</span></div></div></div>
+      <div class="quote reveal"><p>“[ Customer quote about shipping more with a small team. ]”</p><div class="who"><span class="av"></span><div><b>Name Surname</b><span>Role · Company</span></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRICING ============ -->
+<section id="pricing">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Pricing</span>
+      <h2>Start small, scale your fleet</h2>
+      <p><span class="ph-tag">Placeholder tiers &amp; prices — confirm packaging before launch</span></p>
+    </div>
+    <div class="price">
+      <div class="tier reveal">
+        <h3>Solo</h3>
+        <div class="amt">$0<small> / mo</small></div>
+        <div class="desc">For trying Lumpy on a single project.</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>1 project, up to 2 agents</li>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Fleet monitoring &amp; alerts</li>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Community support</li>
+        </ul>
+        <a class="btn btn-ghost" href="#waitlist">Join the waitlist</a>
+      </div>
+      <div class="tier feature reveal">
+        <h3>Team</h3>
+        <div class="amt">$XX<small> / mo</small></div>
+        <div class="desc">For teams running a fleet across several projects.</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Unlimited projects &amp; agents</li>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>The Conductor + self-healing deploys</li>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Librarians &amp; micro-services</li>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Priority support</li>
+        </ul>
+        <a class="btn btn-primary" href="#waitlist">Join the waitlist</a>
+      </div>
+      <div class="tier reveal">
+        <h3>Enterprise</h3>
+        <div class="amt">Let's talk</div>
+        <div class="desc">For portfolios, agencies, and regulated fleets.</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>SSO, roles &amp; audit logs</li>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Self-hosted / VPC deploy</li>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Dedicated Nublear support</li>
+        </ul>
+        <!-- PLACEHOLDER: point at the real Nublear contact route -->
+        <a class="btn btn-ghost" href="https://www.nublear.com/contact">Talk to Nublear</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WAITLIST CTA ============ -->
+<section id="waitlist">
+  <div class="wrap">
+    <div class="cta-band reveal">
+      <h2>Put your engineering on autopilot</h2>
+      <p>Join the waitlist for early access to Lumpy — your autonomous engineering fleet, orchestrated.</p>
+      <!-- PLACEHOLDER: wire this form to a real endpoint (Formspree / API route / CRM) -->
+      <form class="wl" id="wlForm" novalidate>
+        <input type="email" name="email" placeholder="you@company.com" aria-label="Email address" required />
+        <button class="btn btn-primary btn-lg" type="submit">Request early access</button>
+      </form>
+      <div class="wl-note">No spam. Early access invites roll out in batches.</div>
+      <div class="wl-ok" id="wlOk">Thanks — you're on the list. We'll be in touch. ✦</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">FAQ</span>
+      <h2>Questions, answered</h2>
+    </div>
+    <div class="faq">
+      <details class="reveal"><summary>What exactly is Lumpy? <span class="x">+</span></summary><p>Lumpy is an orchestration platform for AI engineering. It runs and supervises fleets of Claude Code agents across your projects and servers, monitors the health of everything, and ships changes with self-healing, auto-rollback deploys — all coordinated by an always-on Conductor.</p></details>
+      <details class="reveal"><summary>Do I need to babysit the agents? <span class="x">+</span></summary><p>No. That's the point. Agents run autonomously on the tasks you give them, and the Conductor keeps the fleet healthy and productive. You step in only when you want to — and you can do that from your phone.</p></details>
+      <details class="reveal"><summary>How do self-healing deploys work? <span class="x">+</span></summary><p>Changes go through build, type-check, and health verification before they go live. If anything fails or the platform doesn't come back healthy, Lumpy automatically rolls back to the last known-good version — so a bad change never takes you down.</p></details>
+      <details class="reveal"><summary>What can it monitor? <span class="x">+</span></summary><p>Servers, machines, and remotes (CPU, memory, disk, load), plus hosted-service uptime checks. When something crosses a threshold or goes offline, Lumpy raises an alert and the Conductor triages it.</p></details>
+      <details class="reveal"><summary>Is my code and infrastructure secure? <span class="x">+</span></summary><p>Lumpy is built by Nublear with least-privilege access and scoped tokens, and Enterprise plans support self-hosted / VPC deployment so your code never leaves your environment. <span style="color:var(--muted-2)">[Placeholder — confirm final security/compliance details before launch.]</span></p></details>
+      <details class="reveal"><summary>When can I use it? <span class="x">+</span></summary><p>Lumpy is rolling out in batches. <a class="grad-text" href="#waitlist" style="font-weight:600">Join the waitlist</a> and we'll send an early-access invite.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a class="brand" href="#top">
+          <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 14c2.5 0 2.5-5 5-5s2.5 5 5 5 2.5-5 5-5" stroke="#03101f" stroke-width="2.2" stroke-linecap="round"/><circle cx="6" cy="18" r="1.6" fill="#03101f"/><circle cx="18" cy="6" r="1.6" fill="#03101f"/></svg></span>
+          <span class="name">Lumpy</span><span class="by">by Nublear</span>
+        </a>
+        <p class="blurb">Your autonomous engineering fleet, orchestrated. A platform by Nublear — modern consulting for the AI era.</p>
+      </div>
+      <div>
+        <h5>Product</h5>
+        <a href="#features">Features</a><a href="#how">How it works</a><a href="#use-cases">Use cases</a><a href="#pricing">Pricing</a>
+      </div>
+      <div>
+        <h5>Company</h5>
+        <!-- PLACEHOLDER: confirm these Nublear routes exist -->
+        <a href="https://www.nublear.com">Nublear</a><a href="https://www.nublear.com/contact">Contact</a><a href="#faq">FAQ</a>
+      </div>
+      <div>
+        <h5>Get started</h5>
+        <a href="#waitlist">Join the waitlist</a><a href="https://www.nublear.com/contact">Talk to us</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© <span id="yr"></span> Nublear. All rights reserved.</span>
+      <span class="mono">lumpy.nublear.com</span>
+    </div>
+  </div>
+</footer>
+</div>
+
+<script>
+  // year
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  // nav scrolled state
+  var nav = document.getElementById('nav');
+  addEventListener('scroll', function(){ nav.classList.toggle('scrolled', scrollY > 8); }, {passive:true});
+  // mobile menu
+  var ham = document.getElementById('ham'), links = document.getElementById('navlinks');
+  ham.addEventListener('click', function(){
+    var open = links.classList.toggle('open');
+    ham.setAttribute('aria-expanded', open);
+  });
+  links.addEventListener('click', function(e){ if(e.target.tagName==='A'){ links.classList.remove('open'); ham.setAttribute('aria-expanded',false);} });
+  // reveal on scroll
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target);} });
+  }, {threshold:.12});
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+  // waitlist (placeholder handler — swap for real endpoint)
+  var form = document.getElementById('wlForm'), ok = document.getElementById('wlOk');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var email = form.email.value.trim();
+    if(!email || email.indexOf('@')<1){ form.email.focus(); return; }
+    // TODO: POST to real waitlist endpoint here.
+    form.style.display='none'; ok.style.display='block';
+  });
+</script>
+</body>
+</html>
